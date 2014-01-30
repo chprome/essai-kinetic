@@ -1,42 +1,3 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-var data = require('./sample_data');
-
-var stage = new Kinetic.Stage({
-  container: 'container',
-  width: 1600,
-  height: 800
-});
-
-var layer = new Kinetic.Layer();
-
-var x = 10,
-  width = 100,
-  height = 50,
-  y = 10;
-
-var rects = [];
-
-data.nodes.forEach(function(node) {
-  var rect = new Kinetic.Rect({
-    x: x,
-    y: y,
-    width: width,
-    height: height,
-    fill: 'green',
-    stroke: 'black',
-    strokeWidth: 1
-  });
-
-  y+=height+10;
-
-  layer.add(rect);
-
-  rects.push(rect);
-});
-
-// add the layer to the stage
-stage.add(layer);
-},{"./sample_data":2}],2:[function(require,module,exports){
 module.exports = {
     nodes: [
         {id: 0, name: 'société A'},
@@ -79,4 +40,3 @@ module.exports = {
         {src: 9, dst: 10, label: '10%'},
     ]
 };
-},{}]},{},[1])
