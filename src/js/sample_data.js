@@ -30,13 +30,13 @@ module.exports = {
 
     links: [
         {src: 1, dst: 2, label: '10%'},
-        {src: 2, dst: 3, label: '10%'},
-        {src: 2, dst: 4, label: '10%'},
-        {src: 2, dst: 6, label: '10%'},
-        {src: 3, dst: 5, label: '10%'},
-        {src: 4, dst: 7, label: '10%'},
-        {src: 6, dst: 8, label: '10%'},
-        {src: 7, dst: 9, label: '10%'},
-        {src: 9, dst: 10, label: '10%'},
+        {src: 2, dst: 3, label: '20%'},
+        {src: 2, dst: 4, label: '30%'},
+        {src: 2, dst: 6, label: '40%'},
+        {src: 3, dst: 5, label: '50%'},
+        {src: 4, dst: 7, label: '60%'},
+        {src: 6, dst: 8, label: '70%'},
+        {src: 7, dst: 9, label: '80%'},
+        {src: 9, dst: 10, label: '90%'},
     ]
 };
