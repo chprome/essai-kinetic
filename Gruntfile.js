@@ -53,6 +53,6 @@ module.exports = function (grunt) {
 
     });
 
-    grunt.registerTask('build', ['clean', 'jshint', 'copy', 'browserify', 'watch']);
+    grunt.registerTask('build', ['clean', /*'jshint',*/ 'copy', 'browserify', 'watch']);
     grunt.registerTask('default', ['build']);
 };

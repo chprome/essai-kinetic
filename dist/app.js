@@ -6803,7 +6803,7 @@ var x = 10,
   height = 50,
   y = 10;
 
-var rects = {};
+var rects = [];
 
 data.nodes.forEach(function(node) {
   var rect = new Kinetic.Rect({
@@ -6811,9 +6811,8 @@ data.nodes.forEach(function(node) {
     y: y,
     width: width,
     height: height,
-    fill: 'green',
-    stroke: 'black',
-    strokeWidth: 1,
+    stroke: '#00739e',
+    strokeWidth: 3,
     draggable: true
   });
 
@@ -6821,54 +6820,67 @@ data.nodes.forEach(function(node) {
 
   rectsLayer.add(rect);
 
-  rects[node.id] = rect;
+  rects.push(rect);
+
+  rect.setAttr('nodeId', node.id);
+
+  rect.on('dragmove', function() {
+    updateLines(this);
+  });
 });
 
 
-var lines = {};
+var srcRects = {},
+    dstRects = {};
 
 data.links.forEach(function (link) {
 
-  var srcPoint = rects[link.src].getPosition(),
-    dstPoint =  rects[link.dst].getPosition();
+  var srcRect = _.find(rects, function(rect) { return rect.getAttr('nodeId') === link.src; }),
+    dstRect = _.find(rects, function(rect) { return rect.getAttr('nodeId') === link.dst; });
 
   var line = new Kinetic.Line({
-    points: [srcPoint.x, srcPoint.y, dstPoint.x, dstPoint.y],
-    stroke: 'red',
-    strokeWidth: 1
+    points: [srcRect.getPosition().x, srcRect.getPosition().y, dstRect.getPosition().x, dstRect.getPosition().y],
+    stroke: '#e25d40',
+    strokeWidth: 2
   });
 
   linesLayer.add(line);
 
-  if(!lines.hasOwnProperty(link.src)) {
-      lines[link.src] = {};
+  srcRects[link.src] = srcRects[link.src] || [];
+  srcRects[link.src].push(line);
+  dstRects[link.dst] = dstRects[link.dst] || [];
+  dstRects[link.dst].push(line);
+
+}.bind(this));
+
+var updateLines = function updateLines(rect) {
+
+  if(srcRects[rect.getAttr('nodeId')]) {  
+    srcRects[rect.getAttr('nodeId')].forEach(function(line) {
+      var currentPoints = line.getPoints();
+      currentPoints[0] = rect.getPosition().x;
+      currentPoints[1] = rect.getPosition().y;
+      line.setPoints(currentPoints);
+    });
   }
 
-  lines[link.src][link.dst] = line;
-
-});
-
-function updateLines() {
-
-  for(var linkSrc in lines) {
-    for(var linkDst in lines[linkSrc]) {
-      var srcPoint = rects[linkSrc].getPosition(),
-        dstPoint =  rects[linkDst].getPosition();
-        lines[linkSrc][linkDst].setPoints(srcPoint.x, srcPoint.y, dstPoint.x, dstPoint.y);
-        console.log('new position',srcPoint.x, srcPoint.y, dstPoint.x, dstPoint.y);
-    }
+  if(dstRects[rect.getAttr('nodeId')]) {
+    dstRects[rect.getAttr('nodeId')].forEach(function(line) {
+      var currentPoints = line.getPoints();
+      currentPoints[2] = rect.getPosition().x;
+      currentPoints[3] = rect.getPosition().y;
+      line.setPoints(currentPoints);
+    });
   }
 
-}
+  linesLayer.draw();
+};
 
+  debugger
 
 // add the layer to the stage
 stage.add(rectsLayer);
 stage.add(linesLayer);
-
-rectsLayer.on('beforeDraw', function() {
-  updateLines();
-}.bind(this));
 },{"./sample_data":3,"lodash":1}],3:[function(require,module,exports){
 module.exports = {
     nodes: [
