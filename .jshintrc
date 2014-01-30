@@ -1,0 +1,24 @@
+{
+  "boss": true,
+  "browser": true,
+  "camelcase": true,
+  "curly": true,
+  "devel": false, 
+  "eqeqeq": false,
+  "eqnull": true,
+  "immed": true,
+  "indent": false,
+  "latedef": true,
+  "multistr": true,
+  "newcap": true,
+  "noarg": true,
+  "sub": true,
+  "strict" : false,
+  "undef": true,
+  "white": false,
+
+  "globals": {
+    "module": true,
+    "require": true
+  }
+}
