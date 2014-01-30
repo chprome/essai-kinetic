@@ -1,4 +1,5 @@
-var data = require('./sample_data'),
+// var data = require('./sample_data'),
+var data = require('./sample_data_2000nodes_1500links'),
   _ = require('lodash');
 
 var stage = new Kinetic.Stage({
@@ -7,8 +8,21 @@ var stage = new Kinetic.Stage({
   height: 800
 });
 
-var rectsLayer = new Kinetic.Layer(),
-  linesLayer = new Kinetic.Layer();
+var mainLayer = new Kinetic.Layer();
+
+mainLayer.setDraggable("draggable");
+
+//a large transparent background to make everything draggable
+var background = new Kinetic.Rect({
+    x: 0,
+    y: 0,
+    width: 1600,
+    height: 800,
+    fill: "red",
+    opacity: 0
+});
+
+mainLayer.add(background);
 
 var margin = 60,
   x = margin,
@@ -20,13 +34,12 @@ var rects = [];
 
 data.nodes.forEach(function(node) {
   var rect = new Kinetic.Rect({
-    x: x,
-    y: y,
+    x: 0,
+    y: 0,
     width: width,
     height: height,
     stroke: '#00739e',
-    strokeWidth: 3,
-    draggable: true
+    strokeWidth: 3
   });
 
   if(y + height + margin  >= 700) {
@@ -36,13 +49,34 @@ data.nodes.forEach(function(node) {
     y+=height+margin;
   }
 
-  rectsLayer.add(rect);
+  var text = new Kinetic.Text({
+    x: width/2,
+    y: height/2,
+    text: node.name,
+    fontSize: '12',
+    fontFamily: 'Arial',
+    fill: '#00739E'
+  });
 
-  rects.push(rect);
+  text.setOffsetX(text.width()/2);
+  text.setOffsetY(text.height()/2);
 
-  rect.setAttr('nodeId', node.id);
+  var group = new Kinetic.Group({
+    x: x,
+    y: y,
+    draggable: true
+  });
 
-  rect.on('dragmove', function() {
+  group.add(rect);
+  group.add(text);
+
+  mainLayer.add(group);
+
+  rects.push(group);
+
+  group.setAttr('nodeId', node.id);
+
+  group.on('dragmove', function() {
     updateLines(this);
   });
 });
@@ -64,7 +98,7 @@ data.links.forEach(function (link) {
     strokeWidth: 2
   });
 
-  linesLayer.add(line);
+  mainLayer.add(line);
 
   var textX = line.getPoints()[0] + (line.getPoints()[2]-line.getPoints()[0])/2,
     textY = line.getPoints()[1] + (line.getPoints()[3]-line.getPoints()[1])/2;
@@ -80,7 +114,7 @@ data.links.forEach(function (link) {
 
   line.setAttr('text', text);
 
-  linesLayer.add(text);
+  mainLayer.add(text);
 
   srcRects[link.src] = srcRects[link.src] || [];
   srcRects[link.src].push(line);
@@ -115,10 +149,17 @@ var updateLines = function updateLines(rect) {
     });
   }
 
-  linesLayer.draw();
+  mainLayer.draw();
 };
 
+var zoom = function(e) {
+  var zoomAmount = e.wheelDeltaY*0.001;
+  mainLayer.setScaleX(mainLayer.getScale().x+zoomAmount);
+  mainLayer.setScaleY(mainLayer.getScale().x+zoomAmount);
+  mainLayer.draw();
+};
+
+document.addEventListener("mousewheel", zoom, false);
 
 // add the layer to the stage
-stage.add(rectsLayer);
-stage.add(linesLayer);
+stage.add(mainLayer);
